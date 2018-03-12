@@ -101,3 +101,25 @@ dt.countries.info$percInternational <- vapply(dt.countries.info$country,
 dt.countries.info
 
 write.table(dt.countries.info, "countriesinfo.txt", sep="\t")
+
+
+# Function to determine the total number of shared artists 
+# over the total numbers of artists present in the charts of both countries
+shared_percentage <- function(country1, country2){
+  dt.country1 <- subset(dt.charts.per.country, charts.regioncode == country1)
+  dt.country2 <- subset(dt.charts.per.country, charts.regioncode == country2)
+  
+  artists.country1 <- unique(dt.country1$artist)
+  artists.country2 <- unique(dt.country2$artist)
+  
+  print(length(artists.country1))
+  print(length(artists.country2))
+  
+  common.artists <- length(intersect(artists.country1, artists.country2))
+  
+  print(common.artists)
+  
+  return(common.artists / (length(artists.country1) + length(artists.country2) - common.artists) )
+}
+
+shared_percentage("NL", "DE")
