@@ -1,5 +1,6 @@
 library('data.table')
 library('maps')
+library('countrycode')
 
 data("world.cities")
 
@@ -16,8 +17,11 @@ dt.world.cities <- rbind(dt.world.cities, data.frame(name = 'Hong Kong', country
                                                      lat = 22.3700556,  long = 114.1535941))
 
 load("spotify-rdata.RData")
-
 dt.spotify <- as.data.table(sf)
+
+# Convert the chart regions' country codes to actual names
+dt.spotify <- subset(dt.spotify, Region != "global")
+dt.spotify$Region <- countrycode(toupper(dt.spotify$Region), "iso2c", "country.name")
 
 dt.spotify <- as.data.table(dt.spotify[, Date := as.Date(paste(dt.spotify$Year, 
                                                ifelse(dt.spotify$Month<10, paste0('0', dt.spotify$Month), dt.spotify$Month), 
