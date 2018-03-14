@@ -331,13 +331,18 @@ ggplot(degree(), aes(x = deg)) + geom_histogram(binwidth = 1) + xlab("Number of 
 # 
 # return(dt.countries.info)
 # })
+
+
+dt.countries.info$country_name <- countrycode(tolower(dt.countries.info$country), 'iso2c', 'country.name')
+
+dt.countries.info <- dt.countries.info[, c(1, 4, 2, 3)]
   
 #plotting 
   
 output$g.point <- renderPlot({
-  ggplot(data = dt.countries.info , aes(x = percInternational, y = numArtists, label=country)) + 
+  ggplot(data = dt.countries.info , aes(x = percInternational, y = numArtists, label = country_name)) + 
     geom_point() + 
-#    geom_point(aes(label == countrycode(input$country.selector.5, 'country.name', 'iso2c'), colour = "green"), size=3) + 
+#    geom_point(aes(label = input$country.selector.5, colour = "green"), size=3) + 
     labs(x = "Percentage of International Actors", y = "Number of Different Actors")
   })
 
