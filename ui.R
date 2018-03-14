@@ -128,6 +128,8 @@ ui <- fluidPage(theme = shinytheme("slate"),
              plotOutput("g.point",  click = "plot_click",
                         dblclick = dblclickOpts(
                           id = "plot_dblclick")),
+             verbatimTextOutput("click_info"),
+            
              p("Explanations")
            )),
   

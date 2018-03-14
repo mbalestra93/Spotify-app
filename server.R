@@ -268,81 +268,82 @@ ggplot(degree(), aes(x = deg)) + geom_histogram(binwidth = 1) + xlab("Number of 
 
   # Tab 5: Internationality ----
 
-sliderMonth <- reactiveValues()
-observe({
-   start_date <- as.POSIXct(input$time.selector.3[1], tz = "GMT")
-   sliderMonth$start <- as.Date(timeFirstDayInMonth(start_date))
-   end_date <- as.POSIXct(input$time.selector.3[2], tz = "GMT")
-   sliderMonth$end <- as.Date(timeLastDayInMonth(end_date))
- })
- 
- international.data <- reactive({
-   # Filtering dates from slider
-   dt.charts.merged <- dt.charts.merged[date >= sliderMonth$start & date <= sliderMonth$end, ]
-   # Selecting top artists
-   dt.charts.merged <- dt.charts.merged[Position <= input$top.x3, ]
-
-get_num_artists <- function(country_id){
-  dt.country.temp <- dt.charts.merged[charts.regioncode == country_id]
-  l.artists <- unique(dt.country.temp$artist)
-  return(length(l.artists))
-}
-
-# We also want to know how many of those artists were not from that
-# country itself. We can use this to determine the percentage of 
-# foreign artists in the complete chart list for a country. 
-
-# A very small chart [DE DE DE NL] would be 25% internationality for country DE.  
-
-get_international_perc <- function(country_id){
-  dt.country.temp <- dt.charts.merged[charts.regioncode == country_id]
-  l.artists.countries <- dt.country.temp$artist.regioncode
-  
-  # We get the amount of appearances of local artists
-  n.own.country <- length(which(l.artists.countries == country_id))
-  
-  # We get the amount of appearances of foreign artists
-  n.foreign.country <- (length(l.artists.countries) - n.own.country)
-  
-  # What % of the total was foreign?
-  total.rows <- nrow(dt.country.temp)
-  
-  return(round(((n.foreign.country / total.rows) * 100), 3))
-}
-
-# The deliverable is a table with info on the amount of artists
-# and the internationality for every country we have charts of. 
-# So, we create this placeholder table and fill it afterwards. 
-
-col.length <- length(unique(dt.charts.per.country$charts.regioncode))
-
-dt.countries.info <- data.table(country = unique(dt.charts.per.country$charts.regioncode),
-                                numArtists = numeric(col.length),
-                                percInternational = numeric(col.length))
-
-# Fill the countries.info table
-dt.countries.info$numArtists <- vapply(dt.countries.info$country,
-                                       get_num_artists,
-                                       numeric(1))
-
-dt.countries.info$percInternational <- vapply(dt.countries.info$country,
-                                              get_international_perc,
-                                              numeric(1))
-
-return(dt.countries.info)
-})
+# sliderMonth <- reactiveValues()
+# observe({
+#    start_date <- as.POSIXct(input$time.selector.3[1], tz = "GMT")
+#    sliderMonth$start <- as.Date(timeFirstDayInMonth(start_date))
+#    end_date <- as.POSIXct(input$time.selector.3[2], tz = "GMT")
+#    sliderMonth$end <- as.Date(timeLastDayInMonth(end_date))
+#  })
+#  
+#  international.data <- reactive({
+#    # Filtering dates from slider
+#    dt.charts.merged <- dt.charts.merged[date >= sliderMonth$start & date <= sliderMonth$end, ]
+#    # Selecting top artists
+#    dt.charts.merged <- dt.charts.merged[Position <= input$top.x3, ]
+# 
+# get_num_artists <- function(country_id){
+#   dt.country.temp <- dt.charts.merged[charts.regioncode == country_id]
+#   l.artists <- unique(dt.country.temp$artist)
+#   return(length(l.artists))
+# }
+# 
+# # We also want to know how many of those artists were not from that
+# # country itself. We can use this to determine the percentage of 
+# # foreign artists in the complete chart list for a country. 
+# 
+# # A very small chart [DE DE DE NL] would be 25% internationality for country DE.  
+# 
+# get_international_perc <- function(country_id){
+#   dt.country.temp <- dt.charts.merged[charts.regioncode == country_id]
+#   l.artists.countries <- dt.country.temp$artist.regioncode
+#   
+#   # We get the amount of appearances of local artists
+#   n.own.country <- length(which(l.artists.countries == country_id))
+#   
+#   # We get the amount of appearances of foreign artists
+#   n.foreign.country <- (length(l.artists.countries) - n.own.country)
+#   
+#   # What % of the total was foreign?
+#   total.rows <- nrow(dt.country.temp)
+#   
+#   return(round(((n.foreign.country / total.rows) * 100), 3))
+# }
+# 
+# # The deliverable is a table with info on the amount of artists
+# # and the internationality for every country we have charts of. 
+# # So, we create this placeholder table and fill it afterwards. 
+# 
+# col.length <- length(unique(dt.charts.per.country$charts.regioncode))
+# 
+# dt.countries.info <- data.table(country = unique(dt.charts.per.country$charts.regioncode),
+#                                 numArtists = numeric(col.length),
+#                                 percInternational = numeric(col.length))
+# 
+# # Fill the countries.info table
+# dt.countries.info$numArtists <- vapply(dt.countries.info$country,
+#                                        get_num_artists,
+#                                        numeric(1))
+# 
+# dt.countries.info$percInternational <- vapply(dt.countries.info$country,
+#                                               get_international_perc,
+#                                               numeric(1))
+# 
+# return(dt.countries.info)
+# })
   
 #plotting 
   
 output$g.point <- renderPlot({
-  ggplot(data = international.data() , aes(x=percInternational, y=numArtists)) + geom_point()
+  ggplot(data = dt.countries.info , aes(x = percInternational, y = numArtists, label=country)) + 
+    geom_point() + 
+#    geom_point(aes(label == countrycode(input$country.selector.5, 'country.name', 'iso2c'), colour = "green"), size=3) + 
     labs(x = "Percentage of International Actors", y = "Number of Different Actors")
-})
+  })
 
-#adding click event data (check this website is in doubt of how to use it https://gallery.shinyapps.io/093-plot-interaction-basic/)
+#adding click event data 
 output$click_info <- renderPrint({
-  cat("input$plot_click:\n")
-  str(input$plot_click)
+  nearPoints(dt.countries.info, input$plot_click, xvar = "percInternational", yvar = "numArtists")
 })
 
   # Tab 6: Hofstede ----
