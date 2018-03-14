@@ -395,5 +395,65 @@ server <- function(input, output) {
       ylab("Count") + 
       ggtitle("Degree Distribution")
   })
-
+  
+  # Tab 5: Internationality ----
+  
+  dt.countries.info$country_name <- countrycode(tolower(dt.countries.info$country), 'iso2c', 'country.name')
+  
+  dt.countries.info <- dt.countries.info[, c(1, 4, 2, 3)]
+  
+  #plotting 
+  
+  output$g.point <- renderPlot({
+    ggplot(data = dt.countries.info , aes(x = percInternational, y = numArtists, label = country_name)) + 
+      geom_point() + 
+      #    geom_point(aes(label = input$country.selector.5, colour = "green"), size=3) + 
+      labs(x = "Percentage of International Actors", y = "Number of Different Actors")
+  })
+  
+  #adding click event data 
+  output$click_info <- renderPrint({
+    nearPoints(dt.countries.info, input$plot_click, xvar = "percInternational", yvar = "numArtists")
+  })
+  
+  # Tab 6: Hofstede ----
+  reactive_data <- reactive({
+    country1 <- input$country.selector.3
+    country2 <- input$country.selector.4
+    return(subset(hofstede, COUNTRY == country1 | COUNTRY == country2))
+    
+  })
+  
+  output$hofstede <- renderPlot({
+    
+    ggplot(data = reactive_data(), aes(x=var_type, y=value, fill=COUNTRY)) + 
+      geom_bar(stat = "identity", position = position_dodge()) +
+      labs(x = "Hofstede's cultural dimension", y = "Value",
+           caption = "
+           Note that every cultural dimension ranges from 1 to 100.
+           Data Retrieved on www.hofstede-insights.com") +
+      geom_text(aes(label = value), vjust=1.6, color="white",
+                position = position_dodge(0.9), size=3.5) +
+      scale_fill_manual(values=c('#6AE368','#D3D3D3')) +
+      theme_bw()
+  })
+  
+  shared_percentage <-  reactive({
+    
+    dt.country1 <- subset(dt.charts.per.country, charts.regionname == input$country.selector.3)
+    dt.country2 <- subset(dt.charts.per.country, charts.regionname == input$country.selector.4)
+    artists.country1 <- unique(dt.country1$artist)
+    artists.country2 <- unique(dt.country2$artist)
+    
+    common.artists <- length(intersect(artists.country1, artists.country2))
+    
+    percentage <- round(((common.artists / ((length(artists.country1) + length(artists.country2) - common.artists)))*100), 3)
+    
+    return(percentage)
+  })
+  
+  output$similarities <- renderText({paste(input$country.selector.3,"and", input$country.selector.4, "have a percentage of similar artists of", shared_percentage(),"%.")})
+  
 }
+
+

@@ -36,3 +36,4 @@ dt.spotify <- merge(dt.spotify, dt.world.cities[, .(country, lat, long)],
                     by.x = 'Region', 
                     by.y = 'country'
                    )
+ 
