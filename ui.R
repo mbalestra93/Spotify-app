@@ -10,7 +10,7 @@ library(shinyjs)
 
 ui <- fluidPage(title = "Spotify Shiny app", 
                 theme = shinytheme("slate"),
-                # Title panel
+                # Title
                 navbarPage(title = div(img(src = "logo.png", 
                                            height = 60, 
                                            width = 40, 
@@ -143,9 +143,12 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                         time (e.g. 2 months) for the same country and whether the musical neighbours
                                         stay the same.
                                         Furthermore, it is possible to display calculations based on 
-                                        different amounts of the top songs. 
-                                        For instance, the app can look at only the top 3 artists 
-                                        in each country and find the corresponding connections."
+                                        different amounts of the top daily artists. 
+                                        For instance, if you choose top 3 artists, the app takes into 
+                                        consideration all the top 3 daily artists that people listened to
+                                        in each day of the selected time period. E.g., it can be a maximum of 93 unique 
+                                        artists for January."
+                                        
                                       ),
                                       # Map
                                       leafletOutput("network.map", 
@@ -196,9 +199,24 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                     
                                     mainPanel(
                                       titlePanel("Degree Distribution"),
-                                      p("Write a little intro"),
+                                      p("The graph below presents the degree distribution of 
+                                        the countries artists. 
+                                        It is possible to select the country, time period over
+                                        which the calculations are performed and the number of 
+                                        top daily artists charts that are supposed to be taken under
+                                        consideration. Number of connections represent to how many
+                                        countries is the selected country connected by specific
+                                        artist. The counts represent the number of artists
+                                        creating particular amount of connections.
+                                        "),
                                       plotOutput("degree.dist"),
-                                      p("Explanations")
+                                      p("Let us look at the following example. By selecting
+                                        Iceland and keeping the sliders as default we can 
+                                        observe that there are around 15 artists that 
+                                        connect Iceland with only one country. 
+                                        However, there are also 3 artists that connect 
+                                        the country with every other country in
+                                        the network.")
                                     )
                            )
                            
