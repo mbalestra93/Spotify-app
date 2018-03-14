@@ -5,7 +5,6 @@ library(ggplot2)
 library(igraph)
 library(dplyr)
 library("readxl")
-library(tidyr)
 
 # load new artist database
 test <- read_excel("Artists & Countries.xlsx")
@@ -68,8 +67,6 @@ get_country_plot("France")
 
 
 #comparing plots
-df <- gather(hofstede, var_type, value, "Power Distance":"Indulgence")
-
 
 compared_plot <- function(i, j){
   dt.temp <- subset(df, COUNTRY==i | COUNTRY==j)
