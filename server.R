@@ -363,7 +363,9 @@ ggplot(data = reactive_data(), aes(x=var_type, y=value, fill=COUNTRY)) +
                     Note that every cultural dimension ranges from 1 to 100.
                     Data Retrieved on www.hofstede-insights.com") +
     geom_text(aes(label = value), vjust=1.6, color="white",
-              position = position_dodge(0.9), size=3.5)
+              position = position_dodge(0.9), size=3.5) +
+    scale_fill_manual(values=c('#6AE368','#D3D3D3')) +
+    theme_bw()
   })
 
 shared_percentage <-  reactive({
