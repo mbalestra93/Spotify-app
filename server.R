@@ -9,17 +9,14 @@ library(dplyr)
 library(sp)
 library(maptools)
 library(DT)
-
-# ggthemr install
 library(devtools)
-devtools::install_github('cttobin/ggthemr')
 library(ggthemr)
 
 server <- function(input, output) {
   
-# Tab 1 ------------------------------------------------------------------------  
-# This tab contains the numerous top-lists (e.g. artist, song) of the data. 
-# The user can select how many items are shown for every top list (e.g. top 5)
+  # Tab 1 ------------------------------------------------------------------------  
+  # This tab contains the numerous top-lists (e.g. artist, song) of the data. 
+  # The user can select how many items are shown for every top list (e.g. top 5)
   
   output$print <- renderUI({
     str1 <- paste("The dataset contains the top 10 listened 
@@ -42,62 +39,61 @@ server <- function(input, output) {
     HTML(paste(str1, str2, str3, sep = "<br/> &nbsp; <br/>"))
     
   })
-    
-  output$text.top5 <- renderText({paste("Check out those top", 
+  
+  output$text.top5 <- renderText({paste0("Check out those top", 
                                         input$Number, "'s!")
-                                })
+  })
   
   output$text.countries <- renderText({paste("Here you see the top", input$Number, 
                                              "countries that listed most artists")
-                                     })
-
+  })
+  
   output$top5 <- 
     DT::renderDataTable({
       dt.sf.top5 <- dt.spotify[, list("Artists_per_Country" = length(unique(Artist))), 
                                by = "Region"]
-      
-      DT::datatable(head(dt.sf.top5[order(-Artists_per_Country)], input$Number), 
-                    options = list(dom = "t", 
+      DT::datatable(dt.sf.top5, colnames = c('Country', 'Artists per country'), rownames=TRUE,
+                    options = list(deferRender = TRUE, dom = 't',
                                    initComplete = JS("function(settings, json) {",
                                                      "$(this.api().table().header()).css(
-                                                       {
-                                                         'background-color': '#1ed760', 
-                                                         'color': '#ffffff'
-                                                       }
-                                                      );
-                                                      $(this.api().table().body()).css(
-                                                       { 'color': '#000000' }
-                                                      );",
-                                                    "}")
-                                  )
-                    )
-    })
+                                                     {
+                                                     'background-color': '#1ed760', 
+                                                     'color': '#fff'
+                                                     }
+                                  );
+                                                     $(this.api().table().body()).css(
+                                                     { 'color': '#000000' }
+                                                     );",
+                                                     "}")), selection ='single') 
+      
+      })
   
   output$text.artist <- renderText({paste("Here you see the top", input$Number, 
                                           "artists with most countries.")
-                                  })
+  })
   
   output$top5.artist <- 
     DT::renderDataTable({
       dt.sf.artist.top5 <- dt.spotify[, list("Countries_per_Artist" = length(unique(Region))), by = "Artist"]
       
-      DT::datatable(head(dt.sf.artist.top5[order(-Countries_per_Artist)], input$Number), 
-                    options = list(dom = "t", 
+      DT::datatable(head(dt.sf.artist.top5[order(-Countries_per_Artist)], input$Number),
+                    colnames = c('Artist', 'Countries per artist'), 
+                    options = list(dom = "t",
                                    initComplete = JS("function(settings, json) {",
                                                      "$(this.api().table().header()).css(
-                                                         {
-                                                           'background-color': '#1ed760', 
-                                                           'color': '#ffffff'
-                                                         }
-                                                        );
+                                                     {
+                                                     'background-color': '#1ed760', 
+                                                     'color': '#ffffff'
+                                                     }
+                                   );
                                                      $(this.api().table().body()).css(
-                                                         { 'color': '#000000' }
-                                                       );",
+                                                     { 'color': '#000000' }
+                                                     );",
                                                       "}")
-                                 )
-                   )
+                    )
+                    )
       })
-
+  
   
   output$text.songs <- renderText({paste("Here you see the top", input$Number, 
                                          "artists with most hits.")})
@@ -106,142 +102,143 @@ server <- function(input, output) {
     DT::renderDataTable({
       dt.sf.artist.songs.top5 <- dt.spotify[, list("Songs_per_Artist" = length(unique(Track.Name))), by = "Artist"]
       
-      DT::datatable(head(dt.sf.artist.songs.top5[order(-Songs_per_Artist)], input$Number), 
+      DT::datatable(head(dt.sf.artist.songs.top5[order(-Songs_per_Artist)], input$Number),
+                    colnames = c('Artist', 'Songs per artist'),
                     options = list(dom = "t", 
                                    initComplete = JS("function(settings, json) {",
                                                      "$(this.api().table().header()).css(
-                                                       {
-                                                         'background-color': '#1ed760', 
-                                                         'color': '#ffffff'
-                                                       }
-                                                     );
+                                                     {
+                                                     'background-color': '#1ed760', 
+                                                     'color': '#ffffff'
+                                                     }
+                                   );
                                                      $(this.api().table().body()).css(
-                                                       { 'color': '#000000' }
+                                                     { 'color': '#000000' }
                                                      );",
                                                     "}")
-                                  )
+                    )
                     )
       })
   
-# Tab 2 ------------------------------------------------------------------------
-
-
+  # Tab 2 ------------------------------------------------------------------------
+  
+  
   output$country <- 
     DT::renderDataTable({
       DT::datatable(dt.spotify[Region == input$Region & 
-                               Date == input$date.selector, 
+                                 Date == input$date.selector, 
                                list(Position, Artist, Track.Name, Region, Date)], 
                     
                     options = list(dom = "t", 
                                    initComplete = JS("function(settings, json) {",
                                                      "$(this.api().table().header()).css(
-                                                            {
-                                                               'background-color': '#1ed760', 
-                                                               'color': '#ffffff'
-                                                            }
-                                                          );",
+                                                     {
+                                                     'background-color': '#1ed760', 
+                                                     'color': '#ffffff'
+                                                     }
+                                   );",
                                                      "}")
-                                   )
                     )
-    })
-
-
-# Tab 3 ----   
+                    )
+      })
+  
+  
+  # Tab 3 ----   
   sliderMonth <- reactiveValues()
-    observe({
-      start_date <- as.POSIXct(input$time.selector[1], tz = "GMT")
-      
-      sliderMonth$start <- as.Date(timeFirstDayInMonth(start_date))
-      
-      end_date <- as.POSIXct(input$time.selector[2], tz = "GMT")
-      
-      sliderMonth$end <- as.Date(timeLastDayInMonth(end_date))
-    })
-
+  observe({
+    start_date <- as.POSIXct(input$time.selector[1], tz = "GMT")
+    
+    sliderMonth$start <- as.Date(timeFirstDayInMonth(start_date))
+    
+    end_date <- as.POSIXct(input$time.selector[2], tz = "GMT")
+    
+    sliderMonth$end <- as.Date(timeLastDayInMonth(end_date))
+  })
+  
   connections <- reactive({
-      # Filtering dates from slider
-      dt.spotify <- dt.spotify[Date >= sliderMonth$start & Date <= sliderMonth$end, ]
-      
-      # Selecting top artists
-      dt.spotify <- dt.spotify[Position <= input$top.x, ]
-      
-      # Filtering the data table
-      dt.spotify <- unique(dt.spotify[, .(Artist, Region)])
-      
-      # Graph preparation
-      dt.unique.countries <- dt.spotify[, .(name = unique(Region), type = TRUE)]
-      dt.unique.artists <- dt.spotify[, .(name = unique(Artist), type = FALSE)]
+    # Filtering dates from slider
+    dt.spotify <- dt.spotify[Date >= sliderMonth$start & Date <= sliderMonth$end, ]
+    
+    # Selecting top artists
+    dt.spotify <- dt.spotify[Position <= input$top.x, ]
+    
+    # Filtering the data table
+    dt.spotify <- unique(dt.spotify[, .(Artist, Region)])
+    
+    # Graph preparation
+    dt.unique.countries <- dt.spotify[, .(name = unique(Region), type = TRUE)]
+    dt.unique.artists <- dt.spotify[, .(name = unique(Artist), type = FALSE)]
+    
+    # Bind tables to create vertices for the graph.
+    dt.spotify.vert <- rbind(dt.unique.countries, dt.unique.artists)
+    
+    # Create a graph with countries connected by listening to commmon artists.
+    g.countries.artists <- graph.data.frame(dt.spotify[, .(Region, Artist)],
+                                            directed = FALSE,
+                                            vertices = dt.spotify.vert)
+    
+    g.country.proj <- bipartite.projection(g.countries.artists)$proj2
+    
+    g.countries.connections <- delete.edges(g.country.proj, which(E(g.country.proj)$weight < input$number.of.connections))
+    
+    # Enable selection of country for the plot
+    dt.edge <- as.data.table(ends(g.countries.connections, E(g.countries.connections)))
+    dt.geo.data <- dt.edge[(V1 == input$country.selector | V2 == input$country.selector), 1:2]
+    
+    setnames(dt.geo.data, 
+             old = c("V1", "V2"), 
+             new = c("from", "to")
+    )
+    
+    dt.geo.data <- merge(dt.geo.data, 
+                         dt.world.cities[, .(country, lat, long)], 
+                         by.x = 'from', 
+                         by.y = 'country'
+    )
+    
+    setnames(dt.geo.data, 
+             old = c("lat", "long"), 
+             new = c("from_lat", "from_long")
+    )
+    
+    dt.geo.data <- merge(dt.geo.data, 
+                         dt.world.cities[, .(country, lat, long)], 
+                         by.x = 'to', 
+                         by.y = 'country'
+    )
+    
+    setnames(dt.geo.data, 
+             old = c("lat", "long"), 
+             new = c("to_lat", "to_long")
+    )
+    
+    dt.geo.data <- dt.geo.data[, 3:6]
+    dt.geo.data$id <- seq(1, dim(dt.geo.data)[1])
+    
+    df.lines <- gather(dt.geo.data, measure, val, -id) %>% group_by(id) %>%
+      do(data.frame(lat=c(.[["val"]][.[["measure"]]=="from_lat"],
+                          .[["val"]][.[["measure"]]=="to_lat"]),
+                    long = c(.[["val"]][.[["measure"]]=="from_long"],
+                             .[["val"]][.[["measure"]]=="to_long"]))) %>% as.data.frame()
+  })
   
-      # Bind tables to create vertices for the graph.
-      dt.spotify.vert <- rbind(dt.unique.countries, dt.unique.artists)
-  
-      # Create a graph with countries connected by listening to commmon artists.
-      g.countries.artists <- graph.data.frame(dt.spotify[, .(Region, Artist)],
-                                              directed = FALSE,
-                                              vertices = dt.spotify.vert)
-  
-      g.country.proj <- bipartite.projection(g.countries.artists)$proj2
-  
-      g.countries.connections <- delete.edges(g.country.proj, which(E(g.country.proj)$weight < input$number.of.connections))
-  
-      # Enable selection of country for the plot
-      dt.edge <- as.data.table(ends(g.countries.connections, E(g.countries.connections)))
-      dt.geo.data <- dt.edge[(V1 == input$country.selector | V2 == input$country.selector), 1:2]
-  
-      setnames(dt.geo.data, 
-               old = c("V1", "V2"), 
-               new = c("from", "to")
-               )
-      
-      dt.geo.data <- merge(dt.geo.data, 
-                           dt.world.cities[, .(country, lat, long)], 
-                           by.x = 'from', 
-                           by.y = 'country'
-                          )
-      
-      setnames(dt.geo.data, 
-               old = c("lat", "long"), 
-               new = c("from_lat", "from_long")
-               )
-      
-      dt.geo.data <- merge(dt.geo.data, 
-                           dt.world.cities[, .(country, lat, long)], 
-                           by.x = 'to', 
-                           by.y = 'country'
-                           )
-      
-      setnames(dt.geo.data, 
-               old = c("lat", "long"), 
-               new = c("to_lat", "to_long")
-               )
-  
-      dt.geo.data <- dt.geo.data[, 3:6]
-      dt.geo.data$id <- seq(1, dim(dt.geo.data)[1])
-  
-      df.lines <- gather(dt.geo.data, measure, val, -id) %>% group_by(id) %>%
-                  do(data.frame(lat=c(.[["val"]][.[["measure"]]=="from_lat"],
-                                         .[["val"]][.[["measure"]]=="to_lat"]),
-                                long = c(.[["val"]][.[["measure"]]=="from_long"],
-                                         .[["val"]][.[["measure"]]=="to_long"]))) %>% as.data.frame()
-    })
-
   # Render network map
   output$network.map <- renderLeaflet({
-      if(nrow(connections()) == 0){
-        leaflet() %>%
+    if(nrow(connections()) == 0){
+      leaflet() %>%
         setView(lat = as.numeric(dt.world.cities[country == input$country.selector, "lat"]), 
                 lng = as.numeric(dt.world.cities[country == input$country.selector, "long"]), 
                 zoom = 5) %>%
-          
+        
         addProviderTiles(providers$CartoDB.DarkMatter,
-                       options = providerTileOptions(noWrap = FALSE)) %>%
-          
+                         options = providerTileOptions(noWrap = FALSE)) %>%
+        
         addPopups(lat = as.numeric(dt.world.cities[country == input$country.selector, "lat"]),
                   lng = as.numeric(dt.world.cities[country == input$country.selector, "long"]), 
                   popup = "Please choose different input", 
                   options = popupOptions(closeButton = TRUE))    
-      } else {
-        leaflet(connections()) %>%
+    } else {
+      leaflet(connections()) %>%
         addProviderTiles(providers$CartoDB.DarkMatter,
                          options = providerTileOptions(noWrap = FALSE)) %>%
         addPolylines(data = connections(), 
@@ -252,9 +249,9 @@ server <- function(input, output) {
                      opacity = 0.5, 
                      weight = 2) %>%
         fitBounds(~min(long), ~min(lat), ~max(long), ~max(lat))
-      }
+    }
   })
-
+  
   network.graph.stats <- reactive({
     
     # Filtering dates from slider
@@ -269,106 +266,106 @@ server <- function(input, output) {
     # Graph preparation
     dt.unique.countries <- dt.spotify[, .(name = unique(Region), type = TRUE)]
     dt.unique.artists <- dt.spotify[, .(name = unique(Artist), type = FALSE)]
-  
+    
     # Bind tables to create vertices for the graph.
     dt.spotify.vert <- rbind(dt.unique.countries, dt.unique.artists)
-  
+    
     # Create a graph with countries connected by listening to commmon artists.
     g.countries.artists <- graph.data.frame(dt.spotify[, .(Region, Artist)],
                                             directed = FALSE,
                                             vertices = dt.spotify.vert)
-  
+    
     g.country.proj <- bipartite.projection(g.countries.artists)$proj2
-  
+    
     # Filter the minimum number of connections
     g.countries.connections <- delete.edges(g.country.proj, 
                                             which(E(g.country.proj)$weight < input$number.of.connections)
-                                           )
+    )
     
     # dt.countries.connections <- as.data.frame(g.countries.connections)
     
-      results <- data.frame(measure = character(),
-                            value = character()
-                           )
-  
-      if (any(1 %in% input$centrality_measures)){
-        results <- rbind(results, 
-                         data.frame(measure = 'Degree Centrality',
-                                    value = as.character(
-                                                          round(igraph::degree(g.countries.connections)[input$country.selector], 0)
-                                                        )
-                                   )
-                         )
-      }
-      
-      if (any(2 %in% input$centrality_measures)){
-        results <- rbind(results, 
-                         data.frame(measure = 'Betweenness',
-                                    value = as.character(
-                                                          round(igraph::betweenness(g.countries.connections)[input$country.selector], 4)
-                                                        )
-                                   )
-                         )
-      }
-      
-      if (any(3 %in% input$centrality_measures)){
-        results <- rbind(results, 
-                         data.frame(measure = 'Closeness',
-                                    value = as.character(
-                                                          round(igraph::closeness(g.countries.connections)[input$country.selector], 4)
-                                                        )
-                                   )
-                        )
-      }
-      
-      if (any(4 %in% input$centrality_measures)){
-        results <- rbind(results, 
-                         data.frame(measure = 'Eigenvector',
-                                    value = as.character(
-                                                          round(igraph::evcent(g.countries.connections)$vector[input$country.selector], 4)
-                                                        )
-                                    )
-                        )
-      }
-      
-      if (any(5 %in% input$centrality_measures)){
-        results <- rbind(results, 
-                         data.frame(measure = 'Clustering Coefficient',
-                                    value = as.character(round(igraph::transitivity(g.countries.connections, type = 'local')[which(V(g.countries.connections)$name == input$country.selector)], 
-                                                               2)
-                                                        )
-                                   )
-                        )
-      }
-      
-  
-      return(results)
+    results <- data.frame(measure = character(),
+                          value = character()
+    )
+    
+    if (any(1 %in% input$centrality_measures)){
+      results <- rbind(results, 
+                       data.frame(measure = 'Degree Centrality',
+                                  value = as.character(
+                                    round(igraph::degree(g.countries.connections)[input$country.selector], 0)
+                                  )
+                       )
+      )
+    }
+    
+    if (any(2 %in% input$centrality_measures)){
+      results <- rbind(results, 
+                       data.frame(measure = 'Betweenness',
+                                  value = as.character(
+                                    round(igraph::betweenness(g.countries.connections)[input$country.selector], 4)
+                                  )
+                       )
+      )
+    }
+    
+    if (any(3 %in% input$centrality_measures)){
+      results <- rbind(results, 
+                       data.frame(measure = 'Closeness',
+                                  value = as.character(
+                                    round(igraph::closeness(g.countries.connections)[input$country.selector], 4)
+                                  )
+                       )
+      )
+    }
+    
+    if (any(4 %in% input$centrality_measures)){
+      results <- rbind(results, 
+                       data.frame(measure = 'Eigenvector',
+                                  value = as.character(
+                                    round(igraph::evcent(g.countries.connections)$vector[input$country.selector], 4)
+                                  )
+                       )
+      )
+    }
+    
+    if (any(5 %in% input$centrality_measures)){
+      results <- rbind(results, 
+                       data.frame(measure = 'Clustering Coefficient',
+                                  value = as.character(round(igraph::transitivity(g.countries.connections, type = 'local')[which(V(g.countries.connections)$name == input$country.selector)], 
+                                                             2)
+                                  )
+                       )
+      )
+    }
+    
+    
+    return(results)
   })
-
+  
   output$table <- renderTable({
-                    network.graph.stats()
-                  })
-
-  output$myConditionalPanel = renderUI({
-      if(length(input$centrality_measures) > 0) {
-        tableOutput("table")
-      }
+    network.graph.stats()
   })
-
-
+  
+  output$myConditionalPanel = renderUI({
+    if(length(input$centrality_measures) > 0) {
+      tableOutput("table")
+    }
+  })
+  
+  
   # Tab 4: Degree Distribution ----
-
+  
   # Create a slider output that enables to select the time range
   sliderMonth.2 <- reactiveValues()
-    observe({
-      start_date <- as.POSIXct(input$time.selector.2[1], tz = "GMT")
-      
-      sliderMonth.2$start <- as.Date(timeFirstDayInMonth(start_date))
-      
-      end_date <- as.POSIXct(input$time.selector.2[2], tz = "GMT")
-      
-      sliderMonth.2$end <- as.Date(timeLastDayInMonth(end_date))
-    })
+  observe({
+    start_date <- as.POSIXct(input$time.selector.2[1], tz = "GMT")
+    
+    sliderMonth.2$start <- as.Date(timeFirstDayInMonth(start_date))
+    
+    end_date <- as.POSIXct(input$time.selector.2[2], tz = "GMT")
+    
+    sliderMonth.2$end <- as.Date(timeLastDayInMonth(end_date))
+  })
   
   # Create a reactive function to calculate the degree distribution
   degree <- reactive({
@@ -380,11 +377,11 @@ server <- function(input, output) {
     
     # Add option of filtering the data table 
     dt.spotify <- unique(dt.spotify[, .(Artist, Region)])
-  
+    
     # Create a data table that contains all the degrees per artist
     degree.dist <- dt.spotify[, .(deg = .N), by = .(Artist)]
     degree.dist <- degree.dist[Artist %in% as.character(dt.spotify[Region == input$country.selector.2, Artist]), ]
-  
+    
   })
   
   output$degree.dist <- renderPlot({
@@ -454,6 +451,5 @@ server <- function(input, output) {
   
   output$similarities <- renderText({paste(input$country.selector.3,"and", input$country.selector.4, "have a percentage of similar artists of", shared_percentage(),"%.")})
   
-}
-
+  }
 
