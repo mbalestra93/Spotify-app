@@ -255,10 +255,10 @@ ui <- fluidPage(title = "Spotify Shiny app",
                  )),
                mainPanel(
                  titlePanel("Hofstede Cultural Dimensions"),
-                 p("Professor Geert Hofstede conducted one of the most comprehensive
+                 p('Professor Geert Hofstede conducted one of the most comprehensive
                    studies on cultural values of each country. He defines culture as
                    "the collective programming of the mind distinguishing the members
-                   of one group or category of people from others"."),
+                   of one group or category of people from others".'),
                  p("In order to explore whether music preferences could somehow mirror
                    the cultural difference we plotted the 6 Hofstede dimensions and then
                    controlled for the number of artists that the two countries have in common."),
@@ -287,11 +287,11 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                               for a tightly-knit framework in society in which
                                               individuals can expect their relatives or members
                                               of a particular ingroup to look after them in 
-                                              exchange for unquestioning loyalty. A society's 
-                                              position on this dimension is reflected in whether
-                                              people's self-image is defined in terms of "I" or "we.""),
+                                              exchange for unquestioning loyalty. A position of
+                                              society on this dimension is reflected in whether
+                                              people's self-image is defined in terms of I or we."),
                                             p("MASCULINITY VERSUS FEMININITY (MAS)"),
-                                            p("The Masculinity side of this dimension represents
+                                            p('The Masculinity side of this dimension represents
                                               a preference in society for achievement, 
                                               heroism, assertiveness, and material rewards
                                               for success. Society at large is more competitive.
@@ -300,7 +300,7 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                               and quality of life. Society at large is more 
                                               consensus-oriented. In the business context 
                                               Masculinity versus Femininity is sometimes also
-                                              related to as "tough versus tender" cultures."),
+                                              related to as "tough versus tender" cultures.'),
                                             p("UNCERTAINTY AVOIDANCE INDEX (UAI)"),
                                             p("The Uncertainty Avoidance dimension expresses
                                               the degree to which the members of a society 
@@ -315,7 +315,7 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                               which practice counts more than principles."),
                                             p("LONG TERM ORIENTATION VERSUS SHORT TERM 
                                               NORMATIVE ORIENTATION (LTO)"),
-                                            p("Every society has to maintain some links
+                                            p('Every society has to maintain some links
                                               with its own past while dealing with the 
                                               challenges of the present and the future. 
                                               Societies prioritize these two existential 
@@ -331,7 +331,7 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                               normative versus (long-term) pragmatic" (PRA).
                                               In the academic environment, the terminology 
                                               Monumentalism versus Flexhumility is sometimes 
-                                              also used."),
+                                              also used.'),
                                             p("INDULGENCE VERSUS RESTRAINT (IND)"),
                                             p("Indulgence stands for a society that allows
                                               relatively free gratification of basic and 
