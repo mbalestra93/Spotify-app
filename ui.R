@@ -14,8 +14,9 @@ ui <- fluidPage(theme = shinytheme("slate"),
                                    height = 60, 
                                    width = 40, 
                                    style = "padding-bottom:10px"), 
-                  "Group 12 - Spotify Top 10"),
-                   
+                   "Group 12 - Spotify Top 10"),
+        
+        # Tab 1
         tabPanel("Summary of the Database", 
                  htmlOutput("stat.summary"),
           
@@ -28,13 +29,14 @@ ui <- fluidPage(theme = shinytheme("slate"),
                    ),
                    wellPanel(
                      sliderInput("Number", 
-                                 label = "Choose the Top .. you want to see:", 
+                                 label = "Choose the number of highest scores you want to see:", 
                                  min = 1, 
                                  max = 10, 
                                  value = 5)
                    )
                  ),
               
+                # Table
                  mainPanel( 
                    h2(textOutput("text.top5"),
                      
@@ -49,6 +51,7 @@ ui <- fluidPage(theme = shinytheme("slate"),
                  )
         ), 
         
+        # Tab 2
         tabPanel("Top 10 per date and country", 
                  htmlOutput("top.10"),
                  sidebarPanel(
@@ -69,6 +72,7 @@ ui <- fluidPage(theme = shinytheme("slate"),
                     )
                  ),
     
+                # Table
                 mainPanel(   
                   titlePanel("Spotify Top 10 by Day by Country!"),
                   p("Use the filters to see the top 10 most listened songs 
@@ -78,9 +82,10 @@ ui <- fluidPage(theme = shinytheme("slate"),
                   DT::dataTableOutput("country")
                 )
         ),
-  
+        
+        # Tab 3
         tabPanel("Countries", htmlOutput("basic.network"),
-         
+                 # Sidebar
                  sidebarPanel(
                    wellPanel(
                      selectInput("country.selector", 
@@ -127,14 +132,21 @@ ui <- fluidPage(theme = shinytheme("slate"),
                 
                 mainPanel(
                   titlePanel("Network Exploratory Analysis"),
-                  p("Below you can find a map with a network of your selected country. 
-                    The countries are connected if those countries listen to the same 
-                    artists. On the left you can select how many artists the countries 
-                    need to have in common to be connected. Moreover, you can select 
-                    the time period over which the app calculates the similarities. 
-                    Furthermore, you can filter on the top number of songs. 
-                    So for example the app can only look at the top 3 songs 
-                    in each country and find the connections. "
+                  p("Below you can find a map with a network of the country that you select. 
+                    The two countries are shown as connected if those countries listen to at
+                    least one same artist.
+                    On the left you can select the minimum number of artists that the countries 
+                    need to have in common to be shown as connected on the map. Moreover, you can 
+                    select the time frame over which the calculations are performed.
+                    Therefore, you can see how the network changes over the selected
+                    time (e.g. 2 months) for the same country and whether the musical neighbours
+                    stay the same.
+                    Furthermore, it is possible to display calculations based on 
+                    different amounts of the top daily artists. 
+                    For instance, if you choose top 3 artists, the app takes into 
+                    consideration all the top 3 daily artists that people listened to
+                    in each day of the selected time period. E.g., it can be a maximum of 93 unique 
+                    artists for January."
                   ),
                   
                   leafletOutput("network.map", 
@@ -143,13 +155,21 @@ ui <- fluidPage(theme = shinytheme("slate"),
                   
                   uiOutput("myConditionalPanel"),
                   
-                  h4("Some cool findings!"),
-                  p("Hello")
+                  h4("Exemplary analysis"),
+                  p("By setting parameters to Argentina, time frame to Jan17-Feb17, min number
+                    of connections to 4 and number of top artists to 10 we can see that the 
+                    map plots connections only to the Central and South America countries
+                    and to Spain. It shows that the Hispanic countries tend to listen to
+                    the similar music. What is interesting, the United States of America 
+                    are not connected to Argentina for this set of parameters. 
+                    They become connected only if we lower the number of required minimum 
+                    connections to one, which means that during this time period Argentina
+                    and USA listened to only one same artist.")
                 )
         
       ),
       
-      
+      # Tab 4
       
       tabPanel("Descriptives", htmlOutput("descriptives"),
         sidebarPanel(
@@ -177,9 +197,24 @@ ui <- fluidPage(theme = shinytheme("slate"),
         
         mainPanel(
           titlePanel("Degree Distribution"),
-          p("Write a little intro"),
+          p("The graph below presents the degree distribution of 
+            the countries' artists. 
+            It is possible to select the country, time period over
+            which the calculations are performed and the number of 
+            top daily artists charts that are supposed to be taken under
+            consideration. Number of connections represent to how many
+            countries is the selected country connected by specific
+            artist. The counts represent the number of artists
+            creating particular amount of connections.
+            "),
           plotOutput("degree.dist"),
-          p("Explanations")
+          p("Let us look at the following example. By selecting
+            Iceland and keeping the sliders as default we can 
+            observe that there are around 15 artists that 
+            connect Iceland with only one country. 
+            However, there are also 3 artists that connect 
+            the country with every other country in
+            the network.")
         )
       ),
       
