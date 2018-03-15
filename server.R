@@ -52,6 +52,8 @@ server <- function(input, output) {
     DT::renderDataTable({
       dt.sf.top5 <- dt.spotify[, list("Artists_per_Country" = length(unique(Artist))), 
                                by = "Region"]
+      dt.sf.top5 <- head(dt.sf.top5[order(-Artists_per_Country)], input$Number)
+      
       DT::datatable(dt.sf.top5, colnames = c('Country', 'Artists per country'), rownames=TRUE,
                     options = list(deferRender = TRUE, dom = 't',
                                    initComplete = JS("function(settings, json) {",
@@ -113,7 +115,9 @@ server <- function(input, output) {
                                                      }
                                    );
                                                      $(this.api().table().body()).css(
-                                                     { 'color': '#000000' }
+                                                     { 
+                                                     'color': '#000000' 
+                                                     }
                                                      );",
                                                     "}")
                     )
@@ -127,16 +131,20 @@ server <- function(input, output) {
     DT::renderDataTable({
       DT::datatable(dt.spotify[Region == input$Region & 
                                  Date == input$date.selector, 
-                               list(Position, Artist, Track.Name, Region, Date)], 
-                    
-                    options = list(dom = "t", 
+                               list(Position, Artist, Track.Name, Region, Date)][order(Position), ],
+                    options = list(dom = "t",
                                    initComplete = JS("function(settings, json) {",
                                                      "$(this.api().table().header()).css(
                                                      {
                                                      'background-color': '#1ed760', 
                                                      'color': '#ffffff'
                                                      }
-                                   );",
+                                   );
+                                                     $(this.api().table().body()).css(
+                                                       { 
+                                                         'color': '#000000' 
+                                                       }
+                                                     );",
                                                      "}")
                     )
                     )
@@ -414,14 +422,27 @@ server <- function(input, output) {
   })
   
   # Tab 6: Hofstede ----
+  
+  output$hofstede.txt <- renderText ({
+    if ((input$country.selector.3 == "Bolivia") |
+        (input$country.selector.3 == "Paraguay") |
+        (input$country.selector.4 == "Bolivia") |
+        (input$country.selector.4 == "Paraguay") ){
+      "Error: Please change country selection. Paraguay and Bolivia don't have any data in the Hofstede database."
+    }
+    else {
+      "Note that potential missing columns are due to a lack of data in the Hofstede Database."
+    }
+  })
+  
   reactive_data <- reactive({
     country1 <- input$country.selector.3
     country2 <- input$country.selector.4
-    return(subset(hofstede, COUNTRY == country1 | COUNTRY == country2))
+    return(subset(dt.hofstede, COUNTRY == country1 | COUNTRY == country2))
     
   })
   
-  output$hofstede <- renderPlot({
+  output$hofstede.plot <- renderPlot({
     
     ggplot(data = reactive_data(), aes(x = var_type, y = value, fill = COUNTRY)) + 
       geom_bar(stat = "identity", position = position_dodge()) +
