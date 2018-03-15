@@ -8,7 +8,8 @@ library(timeDate)
 library(shinythemes)
 library(shinyjs)
 
-ui <- fluidPage(theme = shinytheme("slate"),
+ui <- fluidPage(title = "Spotify Shiny app",
+        theme = shinytheme("slate"),
         # Title
         navbarPage(title = div(img(src = "logo.png", 
                                    height = 60, 
@@ -91,7 +92,7 @@ ui <- fluidPage(theme = shinytheme("slate"),
                      selectInput("country.selector", 
                                  "Select a Country:", 
                                  sort(unique(dt.spotify$Region)),
-                                 selected="Argentina"
+                                 selected = "Argentina"
                                  ),
                       
                      sliderInput("time.selector", 
@@ -101,7 +102,7 @@ ui <- fluidPage(theme = shinytheme("slate"),
                                  value = c(as.Date("2017-01-01"), 
                                            as.Date("2017-12-31")
                                           ), 
-                                 timeFormat="%b %Y"
+                                 timeFormat = "%b %Y"
                                  ),
                      
                     sliderInput("number.of.connections", 
@@ -177,14 +178,14 @@ ui <- fluidPage(theme = shinytheme("slate"),
             selectInput("country.selector.2", 
                         "Select a Country:", 
                         sort(unique(dt.spotify$Region)),
-                        selected="Argentina"
+                        selected = "Argentina"
                        ),
             sliderInput("time.selector.2", 
                         "Select time period:", 
                         min = as.Date("2017-01-01"),
                         max = as.Date("2017-12-31"), 
                         value = c(as.Date("2017-01-01"), as.Date("2017-12-31")), 
-                        timeFormat="%b %Y"
+                        timeFormat = "%b %Y"
                        ),
             
             sliderInput("top.x.2", 
@@ -222,11 +223,11 @@ ui <- fluidPage(theme = shinytheme("slate"),
                sidebarPanel(
                  wellPanel(
                    selectInput("country.selector.5", "Select a Country to highlight:", sort(unique(dt.spotify$Region)),
-                               selected="Argentina"),
+                               selected = "Argentina"),
                    sliderInput("time.selector.3", "Select time period:", min = as.Date("2017-01-01"),
                                max = as.Date("2017-12-31"), 
                                value = c(as.Date("2017-01-01"), as.Date("2017-12-31")), 
-                               timeFormat="%b %Y"),
+                               timeFormat = "%b %Y"),
                    sliderInput("top.x.3", 
                                "Select number of top x artists from daily charts:", 
                                min = 1, max = 10, value = 10)
@@ -248,9 +249,9 @@ ui <- fluidPage(theme = shinytheme("slate"),
                sidebarPanel(
                  wellPanel(
                    selectInput("country.selector.3", "Select a Country:", sort(unique(dt.spotify$Region)),
-                               selected="Argentina"),
+                               selected = "Argentina"),
                    selectInput("country.selector.4", "Select a Country:", sort(unique(dt.spotify$Region)),
-                               selected="Austria")
+                               selected = "Austria")
                  )),
                mainPanel(
                  titlePanel("Hofstede Cultural Dimensions"),
