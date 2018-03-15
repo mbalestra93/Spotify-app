@@ -1,6 +1,7 @@
 library('data.table')
 library('maps')
 library('countrycode')
+library('readxl')
 
 data("world.cities")
 
@@ -18,22 +19,36 @@ dt.world.cities <- rbind(dt.world.cities, data.frame(name = 'Hong Kong', country
 
 load("spotify-rdata.RData")
 dt.spotify <- as.data.table(sf)
+rm(sf)
 
 # Convert the chart regions' country codes to actual names
 dt.spotify <- subset(dt.spotify, Region != "global")
 dt.spotify$Region <- countrycode(toupper(dt.spotify$Region), "iso2c", "country.name")
 
 dt.spotify <- as.data.table(dt.spotify[, Date := as.Date(paste(dt.spotify$Year, 
-                                               ifelse(dt.spotify$Month<10, paste0('0', dt.spotify$Month), dt.spotify$Month), 
-                                               ifelse(dt.spotify$Day<10, paste0('0', dt.spotify$Day), dt.spotify$Day), 
-                                               sep = '/'))
+                                                               ifelse(dt.spotify$Month<10, paste0('0', dt.spotify$Month), dt.spotify$Month), 
+                                                               ifelse(dt.spotify$Day<10, paste0('0', dt.spotify$Day), dt.spotify$Day), 
+                                                               sep = '/'))
                                        ]
-                            )
+)
 
 dt.spotify <- as.data.table(dt.spotify[, month_year := paste0(dt.spotify$Month, '-', dt.spotify$Year)])
 
 dt.spotify <- merge(dt.spotify, dt.world.cities[, .(country, lat, long)], 
                     by.x = 'Region', 
                     by.y = 'country'
-                   )
- 
+)
+
+# Internationality and Divergence --
+load("International.RData")
+
+# Hofstede ---
+
+# remove the factorization of strings
+options(stringsAsFactors = FALSE)
+
+# load the database
+dt.hofstede <- read_excel('Hofstede.xlsx')
+
+# reshaping the database from wide to long
+dt.hofstede <- gather(dt.hofstede, var_type, value, "Power Distance":"Indulgence")
