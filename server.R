@@ -423,15 +423,15 @@ server <- function(input, output) {
   
   output$hofstede <- renderPlot({
     
-    ggplot(data = reactive_data(), aes(x=var_type, y=value, fill=COUNTRY)) + 
+    ggplot(data = reactive_data(), aes(x = var_type, y = value, fill = COUNTRY)) + 
       geom_bar(stat = "identity", position = position_dodge()) +
       labs(x = "Hofstede's cultural dimension", y = "Value",
            caption = "
            Note that every cultural dimension ranges from 1 to 100.
            Data Retrieved on www.hofstede-insights.com") +
-      geom_text(aes(label = value), vjust=1.6, color="white",
-                position = position_dodge(0.9), size=3.5) +
-      scale_fill_manual(values=c('#6AE368','#D3D3D3')) +
+      geom_text(aes(label = value), vjust = 1.6, color = "white",
+                position = position_dodge(0.9), size = 3.5) +
+      scale_fill_manual(values = c('#6AE368','#D3D3D3')) +
       theme_bw()
   })
   
@@ -444,12 +444,13 @@ server <- function(input, output) {
     
     common.artists <- length(intersect(artists.country1, artists.country2))
     
-    percentage <- round(((common.artists / ((length(artists.country1) + length(artists.country2) - common.artists)))*100), 3)
+    percentage <- round(((common.artists 
+                          / ((length(artists.country1) + length(artists.country2) - common.artists))) * 100), 3)
     
     return(percentage)
   })
   
-  output$similarities <- renderText({paste(input$country.selector.3,"and", input$country.selector.4, "have a percentage of similar artists of", shared_percentage(),"%.")})
+  output$similarities <- renderText({paste(input$country.selector.3,"and", input$country.selector.4, "have a percentage of similar artists of", shared_percentage(), "%.")})
   
   }
 
