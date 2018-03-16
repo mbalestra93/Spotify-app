@@ -1,17 +1,3 @@
-library(data.table)
-library(igraph)
-library(ggplot2)
-library(shiny)
-library(ggvis)
-library(timeDate)
-library(tidyr)
-library(dplyr)
-library(sp)
-library(maptools)
-library(DT)
-library(devtools)
-library(ggthemr)
-
 server <- function(input, output) {
   
   # Tab 1 ------------------------------------------------------------------------  
@@ -151,7 +137,7 @@ server <- function(input, output) {
       })
   
   
-  # Tab 3 ----   
+  # Tab 3 ----------------------------------------------------------------------  
   sliderMonth <- reactiveValues()
   observe({
     start_date <- as.POSIXct(input$time.selector[1], tz = "GMT")
@@ -290,7 +276,6 @@ server <- function(input, output) {
                                             which(E(g.country.proj)$weight < input$number.of.connections)
     )
     
-    # dt.countries.connections <- as.data.frame(g.countries.connections)
     
     results <- data.frame(measure = character(),
                           value = character()
@@ -359,9 +344,9 @@ server <- function(input, output) {
       tableOutput("table")
     }
   })
+   
   
-  
-  # Tab 4: Degree Distribution ----
+  # Tab 4: Degree Distribution -------------------------------------------------
   
   # Create a slider output that enables to select the time range
   sliderMonth.2 <- reactiveValues()
@@ -401,28 +386,123 @@ server <- function(input, output) {
       ggtitle("Degree Distribution")
   })
   
-  # Tab 5: Internationality ----
-  
-  dt.countries.info$country_name <- countrycode(tolower(dt.countries.info$country), 'iso2c', 'country.name')
-  
-  dt.countries.info <- dt.countries.info[, c(1, 4, 2, 3)]
-  
-  #plotting 
-  
-  output$g.point <- renderPlot({
-    ggplot(data = dt.countries.info , aes(x = percInternational, y = numArtists, label = country_name)) + 
-      geom_point() + 
-      #    geom_point(aes(label = input$country.selector.5, colour = "green"), size=3) + 
-      labs(x = "Percentage of International Actors", y = "Number of Different Actors")
+  descriptive.stats <- reactive({
+    
+    # Filtering dates from slider
+    dt.spotify <- dt.spotify[Date >= sliderMonth.2$start & Date <= sliderMonth.2$end, ]
+    
+    # Selecting top artists
+    dt.spotify <- dt.spotify[Position <= input$top.x.2, ]
+    
+    # Filtering the data table
+    dt.spotify <- unique(dt.spotify[, .(Artist, Region)])
+    
+    # Graph preparation
+    dt.unique.countries <- dt.spotify[, .(name = unique(Region), type = TRUE)]
+    dt.unique.artists <- dt.spotify[, .(name = unique(Artist), type = FALSE)]
+    
+    # Bind tables to create vertices for the graph.
+    dt.spotify.vert <- rbind(dt.unique.countries, dt.unique.artists)
+    
+    # Create a graph with countries connected by listening to commmon artists.
+    g.countries.artists <- graph.data.frame(dt.spotify[, .(Region, Artist)],
+                                            directed = FALSE,
+                                            vertices = dt.spotify.vert)
+    
+    g.country.proj <- bipartite.projection(g.countries.artists)$proj2
+    
+    
+    descriptive.results <- data.frame(measure = character(),
+                          value = character()
+    )
+    
+    if (any(1 %in% input$descriptive.measures)){
+      descriptive.results <- rbind(descriptive.results, 
+                       data.frame(measure = 'Average path length',
+                                  value = as.character(
+                                    round(igraph::average.path.length(g.country.proj), 0)
+                                  )
+                       )
+      )
+    }
+    
+    if (any(2 %in% input$descriptive.measures)){
+      descriptive.results <- rbind(descriptive.results, 
+                       data.frame(measure = 'Average clustering coefficient',
+                                  value = as.character(
+                                    round(igraph::transitivity(g.country.proj, type = "average"), 4)
+                                  )
+                       )
+      )
+    }
+    
+    if (any(3 %in% input$descriptive.measures)){
+      descriptive.results <- rbind(descriptive.results, 
+                       data.frame(measure = 'Diameter',
+                                  value = as.character(
+                                    round(igraph::diameter(g.country.proj), 4)
+                                  )
+                       )
+      )
+    }
+
+    return(descriptive.results)
   })
   
-  #adding click event data 
-  output$click_info <- renderPrint({
-    nearPoints(dt.countries.info, input$plot_click, xvar = "percInternational", yvar = "numArtists")
+  output$table <- renderTable({
+    descriptive.stats()
   })
   
-  # Tab 6: Hofstede ----
+  output$myConditionalPanel2 = renderUI({
+    if(length(input$descriptive.measures) > 0) {
+      tableOutput("table")
+    }
+  })
   
+  # Tab 5: Internationality ----------------------------------------------------
+
+  sliderMonth.3 <- reactiveValues()
+  observe({
+    start_date <- as.POSIXct(input$time.selector.3[1], tz = "GMT")
+    
+    sliderMonth.3$start <- as.Date(timeFirstDayInMonth(start_date))
+    
+    end_date <- as.POSIXct(input$time.selector.3[2], tz = "GMT")
+    
+    sliderMonth.3$end <- as.Date(timeLastDayInMonth(end_date))
+  })
+  
+  dt.internationality <- reactive({
+
+    # Filtering dates from slider
+    dt.spotify <- dt.spotify[Date >= sliderMonth.3$start & Date <= sliderMonth.3$end, ]
+    
+    # Selecting top artists
+    dt.spotify <- dt.spotify[Position <= input$top.x.3, ]
+    
+    dt.artists.count <- unique(dt.spotify[, .(Region, Artist) ])
+    dt.artists.count <- dt.artists.count[, .(artist_no = .N), by = .(Region)]
+    
+    dt.artists.inter <- unique(dt.spotify[Region_cd != ArtistCountry, .(Region, Artist, Region_cd, ArtistCountry) ])
+    dt.artists.inter <- dt.artists.inter[, .(artist_int = .N), by = .(Region)]
+    
+    dt.internationality <- merge(dt.artists.count, dt.artists.inter, by = "Region")
+    dt.internationality <- dt.internationality[, .(Region, number_of_artistis = artist_no, perc_of_int_artists = round(artist_int / artist_no, 2))]
+    })
+  
+  #plotting
+  output$int_plot <- renderPlotly({
+    ggthemr("chalk", type = "outer")
+    plot <- ggplot(data = dt.internationality() , aes(x = number_of_artistis, y = perc_of_int_artists, label = Region)) +
+      geom_point() +
+      labs(x = "Number of Different Artists per Country", y = "Percentage of Country's International Artists")
+    ggplotly(plot) %>% config(displayModeBar = F)
+  })
+  
+
+    
+  # Tab 6: Hofstede ------------------------------------------------------------
+
   output$hofstede.txt <- renderText ({
     if ((input$country.selector.3 == "Bolivia") |
         (input$country.selector.3 == "Paraguay") |
@@ -434,44 +514,41 @@ server <- function(input, output) {
       "Note that potential missing columns are due to a lack of data in the Hofstede Database."
     }
   })
-  
+
   reactive_data <- reactive({
     country1 <- input$country.selector.3
     country2 <- input$country.selector.4
     return(subset(dt.hofstede, COUNTRY == country1 | COUNTRY == country2))
-    
+
   })
-  
+
   output$hofstede.plot <- renderPlot({
-    
-    ggplot(data = reactive_data(), aes(x = var_type, y = value, fill = COUNTRY)) + 
+    ggthemr("chalk", type = "outer")
+    ggplot(data = reactive_data(), aes(x = var_type, y = value, fill = COUNTRY)) +
       geom_bar(stat = "identity", position = position_dodge()) +
       labs(x = "Hofstede's cultural dimension", y = "Value",
            caption = "
            Note that every cultural dimension ranges from 1 to 100.
            Data Retrieved on www.hofstede-insights.com") +
-      geom_text(aes(label = value), vjust = 1.6, color = "white",
+      geom_text(aes(label = value), hjust = 1.6, color = "black",
                 position = position_dodge(0.9), size = 3.5) +
       scale_fill_manual(values = c('#6AE368','#D3D3D3')) +
-      theme_bw()
+      coord_flip()
   })
-  
+
   shared_percentage <-  reactive({
-    
-    dt.country1 <- subset(dt.charts.per.country, charts.regionname == input$country.selector.3)
-    dt.country2 <- subset(dt.charts.per.country, charts.regionname == input$country.selector.4)
-    artists.country1 <- unique(dt.country1$artist)
-    artists.country2 <- unique(dt.country2$artist)
-    
+
+    artists.country1 <- unique(dt.spotify[ Region == input$country.selector.3, Artist])
+    artists.country2 <- unique(dt.spotify[ Region == input$country.selector.4, Artist])
+
     common.artists <- length(intersect(artists.country1, artists.country2))
-    
-    percentage <- round(((common.artists 
+
+    percentage <- round(((common.artists
                           / ((length(artists.country1) + length(artists.country2) - common.artists))) * 100), 3)
-    
+
     return(percentage)
   })
-  
-  output$similarities <- renderText({paste(input$country.selector.3,"and", input$country.selector.4, "have a percentage of similar artists of", shared_percentage(), "%.")})
+  output$similarities <- renderText({paste0(input$country.selector.3," and ", input$country.selector.4, " have a percentage of similar artists of ", shared_percentage(), "%.")})
   
   }
 
