@@ -31,16 +31,16 @@ ui <- fluidPage(title = "Spotify Shiny app",
                              differences that the daily Top 10 playlist have around
                              the world we decided to carry out this analysis. In this
                              shiny app these pieces of information will be thoroughly
-                             analyzed in order to find what is the trigger that makes
+                             analyzed finding the triggers that make
                              a song famous in a country and not in another. In these 
-                             regards, countries show strongly diversified behaviours 
-                             not only in terms of different artists making an appereance
+                             regards, countries show strongly diversified behaviors 
+                             not only in terms of different artists making an appearance
                              in the Top 10, but in terms of diversification (basically 
-                             different number of artist making an appeance over a certain
+                             different number of artist making an appearance over a certain
                              period of time) or percentage of foreign artists"),
                            p("In each of the tabs of this app you will find a piece 
                              of analyses that, when combined with the others, it will 
-                             provide an all around overview of the trends present in
+                             provide an all-around overview of the trends present in
                              Spotify's Top 10."),
                            h3("Data"),
                            p("The Spotify database, on which is based the large
@@ -53,8 +53,8 @@ ui <- fluidPage(title = "Spotify Shiny app",
                              to scraping the web in order to gather the nationality
                              of all the artists that have gotten into the top 10 at
                              least once. In order to fill gaps that the scraping tool
-                             was unable ot find we found ourselves the information and
-                             aded it manually to this database."),
+                             was unable to find we found ourselves the information and
+                             added it manually to this database."),
                            p("Finally, in order to control for any further cultural
                              factor that could influence music preferences in a country
                              compared to another one, we decided to import the Hofstede's
@@ -326,12 +326,12 @@ ui <- fluidPage(title = "Spotify Shiny app",
                            
                            #Presentation
                            p("By intersecting the artist nationality 
-                             database and the spotify database we were 
+                             database and the Spotify database we were 
                              able to further explore the behavior of two 
                              measures, namely diversification - calculated
                              as number of different artists taking their 
                              spot in the top 10 - and the internationality - 
-                             basically the percentage of foreign artists 
+                             basically, the percentage of foreign artists 
                              amongst the ones in the top 10."),
                            
                            # Plot
@@ -341,8 +341,8 @@ ui <- fluidPage(title = "Spotify Shiny app",
                            bsCollapse(id = "collapseExample",
                                       bsCollapsePanel("Analysis",
                                                       p("As we can see there are some trends that were unexplored
-                                                        that this plot is showing. This analysis will, in particualar,
-                                                        be explaning the top 10 in a whole year time period."),
+                                                        that this plot is showing. This analysis will, in particular,
+                                                        be explaining the top 10 in a whole year time period."),
                                                       p("First of all, looking at the y axes, we can see that
                                                         northern European countries (such as Finland, Denmark, Sweden,
                                                         Latvia and Lithuania) are the countries that, all over the world
@@ -351,7 +351,7 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                                         above mentioned countries, which is a factor to take into
                                                         consideration when deciding where to launch a new single."),
                                                       p("Opposite to the trend shown in the northern European countries,
-                                                        the South Americans are showing a very low differentation, with
+                                                        the South Americans are showing a very low differentiation, with
                                                         countries like Colombia, Mexico, Perù, Bolivia, Ecuador, Argentina
                                                         showing even less that 40 different artists a year."),
                                                       p("Internationality wise, we can see how the very large majority of
@@ -363,13 +363,13 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                                         world wide music market. For Brasil and Finland is more the fact
                                                         that in these countries there is an extremely strongly present niche
                                                         that hardly is as much popular in other countries - namely metal
-                                                        and the latin music such as  salsa, mambo, merengue, rumba and bachata.
-                                                        For France and Italy the national evolution led to have a strong
+                                                        and the latin music such as salsa, mambo, merengue, rumba and bachata.
+                                                        For France and Italy, the national evolution led to have a strong
                                                         national pride in parallel with a very low knowledge of English.
                                                         These two factors lead to a very high presence of nationsal artists."),
                                                       p("When both the axes are taken into consideration two main clusters can be
                                                         seen. The first one is the South American one, that shows high internationality
-                                                        yet very low diverisification. The second one is the European one, with various 
+                                                        yet very low diversification. The second one is the European one, with various 
                                                         countries showing high iternationality with medium diversification (between
                                                         60 and 80 different artists a year). The other countries are scattered around, with
                                                         small clusters that can be deligned (such as the German and nordic one having about
@@ -403,7 +403,7 @@ ui <- fluidPage(title = "Spotify Shiny app",
                            p("In order to explore whether music preferences could somehow mirror 
                               the cultural difference we plotted the 6 Hofstede dimensions and then 
                               calculated the number of artists that two countries have in common as 
-                              a percentage from the total number of countries that each of them 
+                              a percentage from the total number of artists that each of them 
                               listened to."),
                            
                            # Hofstede defintion
