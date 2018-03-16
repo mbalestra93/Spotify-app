@@ -491,10 +491,12 @@ server <- function(input, output) {
     })
   
   #plotting
+  library(ggrepel)
   output$int_plot <- renderPlotly({
     ggthemr("chalk", type = "outer")
     plot <- ggplot(data = dt.internationality() , aes(x = number_of_artistis, y = perc_of_int_artists, label = Region)) +
       geom_point() +
+      
       labs(x = "Number of Different Artists per Country", y = "Percentage of Country's International Artists")
     ggplotly(plot) %>% config(displayModeBar = F)
   })

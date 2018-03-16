@@ -241,9 +241,52 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                     
                                     mainPanel(
                                       titlePanel("Internationality and Diversity"),
-                                      p("Hey, look at me! I'm in a shiny app! All the other pieces of text I know will be jelous!"),
+                                      p("By intersecting the artist nationality 
+                                        database and the spotify database we were 
+                                        able to further explore the behavior of two 
+                                        measures, namely diversification - calculated
+                                        as number of different artists taking their 
+                                        spot in the top 10 - and the internationality - 
+                                        basically the percentage of foreign artists 
+                                        amongst the ones in the top 10."),
                                       plotlyOutput("int_plot"),
-                                      p("Explanations")
+                                      bsCollapse(id = "collapseExample",
+                                                 bsCollapsePanel("Analysis",
+                                                                 p("As we can see there are some trends that were unexplored
+                                                                   that this plot is showing. This analysis will, in particualar,
+                                                                   be explaning the top 10 in a whole year time period."),
+                                                                 p("First of all, looking at the y axes, we can see that
+                                                                   northern European countries (such as Finland, Denmark, Sweden,
+                                                                   Latvia and Lithuania) are the countries that, all over the world
+                                                                   show a higher diversification of artists. For a newcomer artist
+                                                                   it appears that standing out of the crowd is easier in the
+                                                                   above mentioned countries, which is a factor to take into
+                                                                   consideration when deciding where to launch a new single."),
+                                                                 p("Opposite to the trend shown in the northern European countries,
+                                                                   the South Americans are showing a very low differentation, with
+                                                                   countries like Colombia, Mexico, Perù, Bolivia, Ecuador, Argentina
+                                                                   showing even less that 40 different artists a year."),
+                                                                 p("Internationality wise, we can see how the very large majority of
+                                                                   the countries have over 80% of foreign artists - mostly English
+                                                                   speaking - having a spot in their top 10 over the year."),
+                                                                 p("Apart from this cluster, the 3 countries that stand out the most are
+                                                                   U.S.A., Brasil, Italy and France and Finland. While for the first one the decisive
+                                                                   factor is the fact that American artists are the ones leading the
+                                                                   world wide music market. For Brasil and Finland is more the fact
+                                                                   that in these countries there is an extremely strongly present niche
+                                                                   that hardly is as much popular in other countries - namely metal
+                                                                   and the latin music such as  salsa, mambo, merengue, rumba and bachata.
+                                                                   For France and Italy the national evolution led to have a strong
+                                                                   national pride in parallel with a very low knowledge of English.
+                                                                   These two factors lead to a very high presence of nationsal artists."),
+                                                                 p("When both the axes are taken into consideration two main clusters can be
+                                                                   seen. The first one is the South American one, that shows high internationality
+                                                                   yet very low diverisification. The second one is the European one, with various 
+                                                                   countries showing high iternationality with medium diversification (between
+                                                                   60 and 80 different artists a year). The other countries are scattered around, with
+                                                                   small clusters that can be deligned (such as the German and nordic one having about
+                                                                   80 artist a year and a 70% of international artists)."),
+                                                                 style = "default"))
                                     )),
                           # Tab 6
                            tabPanel("Hofstede", htmlOutput("hofstede.tab"),
@@ -261,8 +304,9 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                         "the collective programming of the mind distinguishing the members
                                         of one group or category of people from others".'),
                                       p("In order to explore whether music preferences could somehow mirror
-                                        the cultural difference we plotted the 6 Hofstede dimensions and then
-                                        controlled for the number of artists that the two countries have in common."),
+                                        the cultural difference amongst two countries, we plotted the 6 
+                                        Hofstede dimensions and then controlled for the number of artists
+                                        that the two countries have in common."),
                                       bsCollapse(id = "collapseExample",
                                                  bsCollapsePanel("Hofstede 6 Dimensions Definition ",
                                                                  p("POWER DISTANCE INDEX (PDI)"),
