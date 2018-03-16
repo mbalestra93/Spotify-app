@@ -390,7 +390,7 @@ ui <- fluidPage(title = "Spotify Shiny app",
 
                                       plotOutput("hofstede.plot"),
                                       h5(textOutput("similarities")),
-                                      bsCollapsePanel("Insights on the outcome of the analysis",
+                                      bsCollapsePanel("Analysis",
                                                       p("Despite the fact that some countries such as Latvia and
                                                         Lithuania are showing storng similarities according to
                                                         the Hofstede Framework and have a quite high percentage

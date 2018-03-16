@@ -506,14 +506,16 @@ server <- function(input, output) {
   # Tab 6: Hofstede ------------------------------------------------------------
 
   output$hofstede.txt <- renderText ({
-    if ((input$country.selector.3 == "Bolivia") |
-        (input$country.selector.3 == "Paraguay") |
-        (input$country.selector.4 == "Bolivia") |
-        (input$country.selector.4 == "Paraguay") ){
-      "Error: Please change country selection. Paraguay and Bolivia don't have any data in the Hofstede database."
-    }
-    else {
-      "Note that potential missing columns are due to a lack of data in the Hofstede Database."
+    if (input$country.selector.3 == input$country.selector.4) {
+      "Error: Please change country selection by selecting two different countries."
+    } else{
+            if ((input$country.selector.3 == "Bolivia") |
+                (input$country.selector.3 == "Paraguay") |
+                (input$country.selector.4 == "Bolivia") |
+                (input$country.selector.4 == "Paraguay") ){
+              "Error: Please change country selection. Paraguay and Bolivia don't have any data in the Hofstede database."
+            } else {
+                    "Note that potential missing columns are due to a lack of data in the Hofstede Database."}
     }
   })
 
