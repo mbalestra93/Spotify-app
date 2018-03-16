@@ -16,10 +16,10 @@ ui <- fluidPage(title = "Spotify Shiny app",
                          sidebarPanel(
                            titlePanel("Group Number 12:"),
                            verticalLayout(
-                             h4("Agnieszka Kloc     - 490033"),
-                             h4("Esmee Peet         - 486389"),
-                             h4("Laurens Jansma     - 377675"),
-                             h4("Marco Fogli        - 462924")
+                             h4("Agnieszka"),
+                             h4("Esmee"),
+                             h4("Laurens"),
+                             h4("Marco")
                            )
                          ),
                          
