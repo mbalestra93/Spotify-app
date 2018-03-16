@@ -1,6 +1,7 @@
 server <- function(input, output) {
   
-  # Tab 1 ------------------------------------------------------------------------  
+  # Tab 1: Summary of the database -------------------------------------------------------
+  
   # This tab contains the numerous top-lists (e.g. artist, song) of the data. 
   # The user can select how many items are shown for every top list (e.g. top 5)
   
@@ -30,6 +31,8 @@ server <- function(input, output) {
                                         input$Number, "'s!")
   })
   
+  #Table 1: Top x countries with the highest diversity of artists -----------------
+  
   output$text.countries <- renderText({paste("Here you see the top", input$Number, 
                                              "countries that listed most artists")
   })
@@ -56,13 +59,16 @@ server <- function(input, output) {
       
       })
   
+  #Table 2: Top x artists per countries in which they've been in the Top x ----------------
+  
   output$text.artist <- renderText({paste("Here you see the top", input$Number, 
                                           "artists with most countries.")
   })
   
   output$top5.artist <- 
     DT::renderDataTable({
-      dt.sf.artist.top5 <- dt.spotify[, list("Countries_per_Artist" = length(unique(Region))), by = "Artist"]
+      dt.sf.artist.top5 <- dt.spotify[, list("Countries_per_Artist" = length(unique(Region))),
+                                      by = "Artist"]
       
       DT::datatable(head(dt.sf.artist.top5[order(-Countries_per_Artist)], input$Number),
                     colnames = c('Artist', 'Countries per artist'), 
@@ -82,13 +88,15 @@ server <- function(input, output) {
                     )
       })
   
+  #Table 3: Top X artists with the higher number of songs appearing in a Top x -------------
   
   output$text.songs <- renderText({paste("Here you see the top", input$Number, 
                                          "artists with most hits.")})
   
   output$top5.songs <- 
     DT::renderDataTable({
-      dt.sf.artist.songs.top5 <- dt.spotify[, list("Songs_per_Artist" = length(unique(Track.Name))), by = "Artist"]
+      dt.sf.artist.songs.top5 <- dt.spotify[, list("Songs_per_Artist" = length(unique(Track.Name))),
+                                            by = "Artist"]
       
       DT::datatable(head(dt.sf.artist.songs.top5[order(-Songs_per_Artist)], input$Number),
                     colnames = c('Artist', 'Songs per artist'),
@@ -110,7 +118,7 @@ server <- function(input, output) {
                     )
       })
   
-  # Tab 2 ------------------------------------------------------------------------
+  # Tab 2: Top 10 per date and country ----------------------------------------------------------
   
   
   output$country <- 
@@ -137,7 +145,8 @@ server <- function(input, output) {
       })
   
   
-  # Tab 3 ----------------------------------------------------------------------  
+  # Tab 3: Countries Network --------------------------------------------------- 
+  
   sliderMonth <- reactiveValues()
   observe({
     start_date <- as.POSIXct(input$time.selector[1], tz = "GMT")
@@ -173,7 +182,8 @@ server <- function(input, output) {
     
     g.country.proj <- bipartite.projection(g.countries.artists)$proj2
     
-    g.countries.connections <- delete.edges(g.country.proj, which(E(g.country.proj)$weight < input$number.of.connections))
+    g.countries.connections <- delete.edges(g.country.proj,
+                                            which(E(g.country.proj)$weight < input$number.of.connections))
     
     # Enable selection of country for the plot
     dt.edge <- as.data.table(ends(g.countries.connections, E(g.countries.connections)))
@@ -281,6 +291,8 @@ server <- function(input, output) {
                           value = character()
     )
     
+    # Centrality measures selection
+    
     if (any(1 %in% input$centrality_measures)){
       results <- rbind(results, 
                        data.frame(measure = 'Degree Centrality',
@@ -324,7 +336,8 @@ server <- function(input, output) {
     if (any(5 %in% input$centrality_measures)){
       results <- rbind(results, 
                        data.frame(measure = 'Clustering Coefficient',
-                                  value = as.character(round(igraph::transitivity(g.countries.connections, type = 'local')[which(V(g.countries.connections)$name == input$country.selector)], 
+                                  value = as.character(round(igraph::transitivity(g.countries.connections,
+                                                                                  type = 'local')[which(V(g.countries.connections)$name == input$country.selector)], 
                                                              2)
                                   )
                        )
@@ -373,7 +386,8 @@ server <- function(input, output) {
     
     # Create a data table that contains all the degrees per artist
     degree.dist <- dt.spotify[, .(deg = .N), by = .(Artist)]
-    degree.dist <- degree.dist[Artist %in% as.character(dt.spotify[Region == input$country.selector.2, Artist]), ]
+    degree.dist <- degree.dist[Artist %in% as.character(dt.spotify[Region == input$country.selector.2,
+                                                                   Artist]), ]
     
   })
   
@@ -415,6 +429,8 @@ server <- function(input, output) {
     descriptive.results <- data.frame(measure = character(),
                           value = character()
     )
+    
+    # Descriptive measures selection
     
     if (any(1 %in% input$descriptive.measures)){
       descriptive.results <- rbind(descriptive.results, 
@@ -483,21 +499,29 @@ server <- function(input, output) {
     dt.artists.count <- unique(dt.spotify[, .(Region, Artist) ])
     dt.artists.count <- dt.artists.count[, .(artist_no = .N), by = .(Region)]
     
-    dt.artists.inter <- unique(dt.spotify[Region_cd != ArtistCountry, .(Region, Artist, Region_cd, ArtistCountry) ])
+    dt.artists.inter <- unique(dt.spotify[Region_cd != ArtistCountry, .(Region,
+                                                                        Artist,
+                                                                        Region_cd,
+                                                                        ArtistCountry) ])
     dt.artists.inter <- dt.artists.inter[, .(artist_int = .N), by = .(Region)]
     
     dt.internationality <- merge(dt.artists.count, dt.artists.inter, by = "Region")
-    dt.internationality <- dt.internationality[, .(Region, number_of_artistis = artist_no, perc_of_int_artists = round(artist_int / artist_no, 2))]
+    dt.internationality <- dt.internationality[, .(Region, 
+                                                   number_of_artistis = artist_no,
+                                                   perc_of_int_artists = round(artist_int / artist_no, 2))]
     })
   
   #plotting
   library(ggrepel)
   output$int_plot <- renderPlotly({
     ggthemr("chalk", type = "outer")
-    plot <- ggplot(data = dt.internationality() , aes(x = number_of_artistis, y = perc_of_int_artists, label = Region)) +
+    plot <- ggplot(data = dt.internationality(),
+                   aes(x = number_of_artistis, 
+                       y = perc_of_int_artists, 
+                       label = Region)) +
       geom_point() +
-      
-      labs(x = "Number of Different Artists per Country", y = "Percentage of Country's International Artists")
+      labs(x = "Number of Different Artists per Country",
+           y = "Percentage of Country's International Artists")
     ggplotly(plot) %>% config(displayModeBar = F)
   })
   
@@ -505,6 +529,8 @@ server <- function(input, output) {
     
   # Tab 6: Hofstede ------------------------------------------------------------
 
+  # Errors text output 
+  
   output$hofstede.txt <- renderText ({
     if (input$country.selector.3 == input$country.selector.4) {
       "Error: Please change country selection by selecting two different countries."
@@ -513,12 +539,15 @@ server <- function(input, output) {
                 (input$country.selector.3 == "Paraguay") |
                 (input$country.selector.4 == "Bolivia") |
                 (input$country.selector.4 == "Paraguay") ){
-              "Error: Please change country selection. Paraguay and Bolivia don't have any data in the Hofstede database."
-            } else {
-                    "Note that potential missing columns are due to a lack of data in the Hofstede Database."}
+              "Error: Please change country selection. Paraguay and Bolivia
+              don't have any data in the Hofstede database."
+            } else {"Note that potential missing columns are due to a lack
+              of data in the Hofstede Database."}
     }
   })
 
+  # Data Preparation 
+  
   reactive_data <- reactive({
     country1 <- input$country.selector.3
     country2 <- input$country.selector.4
@@ -526,6 +555,8 @@ server <- function(input, output) {
 
   })
 
+  # Plotting 
+  
   output$hofstede.plot <- renderPlot({
     ggthemr("chalk", type = "outer")
     ggplot(data = reactive_data(), aes(x = var_type, y = value, fill = COUNTRY)) +
@@ -540,6 +571,8 @@ server <- function(input, output) {
       coord_flip()
   })
 
+  # Percentage of common artists over total number of unique artists calculation
+  
   shared_percentage <-  reactive({
 
     artists.country1 <- unique(dt.spotify[ Region == input$country.selector.3, Artist])
@@ -547,12 +580,21 @@ server <- function(input, output) {
 
     common.artists <- length(intersect(artists.country1, artists.country2))
 
-    percentage <- round(((common.artists
-                          / ((length(artists.country1) + length(artists.country2) - common.artists))) * 100), 3)
+    percentage <- round(((common.artists /
+                            ((length(artists.country1) + length(artists.country2) - common.artists)))
+                         * 100), 3)
 
     return(percentage)
   })
-  output$similarities <- renderText({paste0(input$country.selector.3," and ", input$country.selector.4, " have a percentage of similar artists of ", shared_percentage(), "%.")})
+  
+  # Percentage Text
+  
+  output$similarities <- renderText({paste0(input$country.selector.3,
+                                            " and ",
+                                            input$country.selector.4,
+                                            " have a percentage of similar artists of ",
+                                            shared_percentage(),
+                                            "%.")})
   
   }
 
