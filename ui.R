@@ -8,7 +8,73 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                        "Group 12 - Spotify Top 10" 
                 ),
                 
-                # Tab 1
+                # Landing Page ------------------------------------------
+                
+                tabPanel("Landing Page", 
+                         
+                         # Sidebar          
+                         sidebarPanel(
+                           titlePanel("Group Number 12:"),
+                           verticalLayout(
+                             h4("Agnieszka Kloc     - 490033"),
+                             h4("Esmee Peet         - 486389"),
+                             h4("Laurens Jansma     - 377675"),
+                             h4("Marco Fogli        - 462924")
+                           )
+                         ),
+                         
+                         # Maintab
+                         mainPanel( 
+                           h2("Spotify Network Analysis"),
+                           h3("Scope of the Analysis"),
+                           p("In order to analyze the trends, similarities and 
+                             differences that the daily Top 10 playlist have around
+                             the world we decided to carry out this analysis. In this
+                             shiny app these pieces of information will be thoroughly
+                             analyzed in order to find what is the trigger that makes
+                             a song famous in a country and not in another. In these 
+                             regards, countries show strongly diversified behaviours 
+                             not only in terms of different artists making an appereance
+                             in the Top 10, but in terms of diversification (basically 
+                             different number of artist making an appeance over a certain
+                             period of time) or percentage of foreign artists"),
+                           p("In each of the tabs of this app you will find a piece 
+                             of analyses that, when combined with the others, it will 
+                             provide an all around overview of the trends present in
+                             Spotify's Top 10."),
+                           h3("Data"),
+                           p("The Spotify database, on which is based the large
+                             majority of this analysis has been retrieved in 
+                             INSERTWEBSITE on INSERTDATA. In particular, the data
+                             has the information of the daily Top 10 most listened
+                             to songs in more than 50 different countries over a 
+                             year of observation."),
+                           p("To further expand the scope of analysis we decided
+                             to scraping the web in order to gather the nationality
+                             of all the artists that have gotten into the top 10 at
+                             least once. In order to fill gaps that the scraping tool
+                             was unable ot find we found ourselves the information and
+                             aded it manually to this database."),
+                           p("Finally, in order to control for any further cultural
+                             factor that could influence music preferences in a country
+                             compared to another one, we decided to import the Hofstede's
+                             6 Dimension database for all the countries of our dataset."),
+                           h3("Business utility"),
+                           p("Spotify derives value from its music recommendation
+                             system. Having this information on cultural and 
+                             musical similarities can help both simplify and 
+                             improve the playlist curating process."),
+                           p("This app can also give artists insight in the
+                             countries where the similarity is highest. Using 
+                             this information, artists and their managers can 
+                             coordinate promotional efforts in a better way, 
+                             giving a higher value.")
+                           
+                         )
+                ),
+                
+                # Tab 1 ------------------------------------------
+                
                 tabPanel("Summary of the Database", 
                          htmlOutput("stat.summary"),
                          
@@ -28,10 +94,11 @@ ui <- fluidPage(title = "Spotify Shiny app",
                            )
                          ),
                          
-                         # Table
+                         # Maintab
                          mainPanel( 
                            h2(textOutput("text.top5"),
                               
+                              # Tables
                               h4(textOutput("text.countries")),
                               DT::dataTableOutput("top5"),
                               
@@ -43,7 +110,8 @@ ui <- fluidPage(title = "Spotify Shiny app",
                          )
                 ), 
                 
-                # Tab 2
+                # Tab 2 ------------------------------------------
+                
                 tabPanel("Top 10 per Date and Country", 
                          htmlOutput("top.10"),
                          sidebarPanel(
@@ -64,18 +132,20 @@ ui <- fluidPage(title = "Spotify Shiny app",
                            )
                          ),
                          
-                         # Table
+                         # Maintab
                          mainPanel(   
                            titlePanel("Spotify Top 10 by Day by Country"),
                            p("Use the filters to see the top 10 most listened songs 
                              on Spotify in a specified country and on a specified day."),
                            
+                           # Table
                            h5(textOutput("text.top10.intro")),
                            DT::dataTableOutput("country")
                            )
                 ),
                 
-                # Tab 3
+                # Tab 3 ------------------------------------------
+                
                 tabPanel("Countries", htmlOutput("basic.network"),
                          # Sidebar
                          sidebarPanel(
@@ -122,6 +192,7 @@ ui <- fluidPage(title = "Spotify Shiny app",
                            )
                          ),
                          
+                         # Maintab
                          mainPanel(
                            titlePanel("Network Exploratory Analysis"),
                            p("Below you can find a map with a network of the country that you select. 
@@ -139,12 +210,15 @@ ui <- fluidPage(title = "Spotify Shiny app",
                               maximum of 93 unique artists for January."
                            ),
                            
+                           # Table
                            leafletOutput("network.map", 
                                          width = 1000, 
                                          height = 600),
                            
                            uiOutput("myConditionalPanel"),
                            
+                          
+                          # Comment 
                            bsCollapsePanel("Illustrational Example",
                                            p("By setting the parameters to Argentina, time frame to Jan17-Feb17, min number
                                              of connections to 5 and number of top artists to 10, we can see that the map 
@@ -159,9 +233,11 @@ ui <- fluidPage(title = "Spotify Shiny app",
                          
                            ),
                 
-                # Tab 4
+                # Tab 4  ------------------------------------------
                 
                 tabPanel("Descriptives", htmlOutput("descriptives"),
+                         
+                         # Sidebar
                          sidebarPanel(
                            wellPanel(
                              selectInput("country.selector.2", 
@@ -192,8 +268,11 @@ ui <- fluidPage(title = "Spotify Shiny app",
                            )
                          ),
                          
+                         # Maintab
                          mainPanel(
                            titlePanel("Degree Distribution"),
+                           
+                           #Presentation
                            p("The graph below presents the degree distribution of the countries' artists. 
                              It is possible to select a country, time period over which the calculations 
                              are performed and the number of top daily artists charts that are supposed 
@@ -203,6 +282,8 @@ ui <- fluidPage(title = "Spotify Shiny app",
                              connections."
                              ),
                            plotOutput("degree.dist"),
+                           
+                           # Comment 
                            bsCollapsePanel("Illustrational Example",
                            p("Let us look at the following example. By selecting Iceland and
                              keeping the sliders as default we can observe that there are around 
@@ -215,11 +296,12 @@ ui <- fluidPage(title = "Spotify Shiny app",
                            style = "default"),
                            uiOutput("myConditionalPanel2")
                            )
-                           )
-                ,
+                           ),
                 
-                # Tab 5
+                # Tab 5  ------------------------------------------
                 tabPanel("Internationality", htmlOutput("international"),
+                         
+                         # sidetab
                          sidebarPanel(
                            wellPanel(
                              sliderInput("time.selector.3", 
@@ -238,8 +320,11 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                      )
                                       ),
                          
+                         # Maintab
                          mainPanel(
                            titlePanel("Internationality and Diversity"),
+                           
+                           #Presentation
                            p("By intersecting the artist nationality 
                              database and the spotify database we were 
                              able to further explore the behavior of two 
@@ -248,7 +333,11 @@ ui <- fluidPage(title = "Spotify Shiny app",
                              spot in the top 10 - and the internationality - 
                              basically the percentage of foreign artists 
                              amongst the ones in the top 10."),
+                           
+                           # Plot
                            plotlyOutput("int_plot"),
+                           
+                           #Comment
                            bsCollapse(id = "collapseExample",
                                       bsCollapsePanel("Analysis",
                                                       p("As we can see there are some trends that were unexplored
@@ -287,8 +376,12 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                                         80 artist a year and a 70% of international artists)."),
                                                       style = "default"))
                                                       )),
-                # Tab 6
+                
+                # Tab 6  ------------------------------------------
+                
                 tabPanel("Hofstede", htmlOutput("hofstede.tab"),
+                         
+                         #Sidetab
                          sidebarPanel(
                            wellPanel(
                              selectInput("country.selector.3", "Select a Country:", sort(unique(dt.spotify$Region)),
@@ -297,8 +390,12 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                          selected = "Austria")
                                      )
                                       ),
+                         
+                         # Maintab
                          mainPanel(
                            titlePanel("Hofstede Cultural Dimensions"),
+                           
+                           # Presentation
                            p('Professor Geert Hofstede conducted one of the most comprehensive
                              studies on cultural values of each country. He defines culture as
                              "the collective programming of the mind distinguishing the members
@@ -308,6 +405,8 @@ ui <- fluidPage(title = "Spotify Shiny app",
                               calculated the number of artists that two countries have in common as 
                               a percentage from the total number of countries that each of them 
                               listened to."),
+                           
+                           # Hofstede defintion
                            bsCollapse(id = "collapseExample",
                                       bsCollapsePanel("Hofstede 6 Dimensions Definition ",
                                                       p("POWER DISTANCE INDEX (PDI)"),
@@ -387,10 +486,14 @@ ui <- fluidPage(title = "Spotify Shiny app",
                                                         regulates it by means of strict social norms."),
                                                       style = "default")),
                            
+                           # Error Message
                            textOutput("hofstede.txt"),
                            
+                           # Plot
                            plotOutput("hofstede.plot"),
                            h5(textOutput("similarities")),
+                           
+                           # Comment
                            bsCollapsePanel("Analysis",
                                            p("Despite the fact that some countries such as Latvia and
                                              Lithuania are showing storng similarities according to

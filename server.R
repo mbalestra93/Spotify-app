@@ -1,5 +1,6 @@
 server <- function(input, output) {
   
+  
   # Tab 1: Summary of the database -------------------------------------------------------
   
   # This tab contains the numerous top-lists (e.g. artist, song) of the data. 
