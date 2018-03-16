@@ -30,30 +30,20 @@ ui <- fluidPage(title = "Spotify Shiny app",
                            p("In order to analyze the trends, similarities and 
                              differences that the daily Top 10 playlist have around
                              the world we decided to carry out this analysis. In this
-                             shiny app these pieces of information will be thoroughly
-                             analyzed finding the triggers that make
-                             a song famous in a country and not in another. In these 
-                             regards, countries show strongly diversified behaviors 
-                             not only in terms of different artists making an appearance
-                             in the Top 10, but in terms of diversification (basically 
-                             different number of artist making an appearance over a certain
-                             period of time) or percentage of foreign artists"),
-                           p("In each of the tabs of this app you will find a piece 
-                             of analyses that, when combined with the others, it will 
-                             provide an all-around overview of the trends present in
-                             Spotify's Top 10."),
+                             shiny app each tab will cover a part of the analysis that,
+                             when combined with the others, it will  provide an all-around
+                             overview of the trends present in Spotify's Top 10."),
                            h3("Data"),
                            p("The Spotify database, on which is based the large
-                             majority of this analysis has been retrieved in 
-                             INSERTWEBSITE on INSERTDATA. In particular, the data
-                             has the information of the daily Top 10 most listened
-                             to songs in more than 50 different countries over a 
-                             year of observation."),
+                             majority of this analysis has been retrieved from 
+                             Kaggle. In particular, the data has the information 
+                             of the daily Top 10 most listened to songs in more 
+                             than 50 different countries over ayear of observation."),
                            p("To further expand the scope of analysis we decided
-                             to scraping the web in order to gather the nationality
+                             to scrape the web in order to gather the nationality
                              of all the artists that have gotten into the top 10 at
                              least once. In order to fill gaps that the scraping tool
-                             was unable to find we found ourselves the information and
+                             was unable to fill we searched ourselves for such information and
                              added it manually to this database."),
                            p("Finally, in order to control for any further cultural
                              factor that could influence music preferences in a country
