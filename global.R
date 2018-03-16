@@ -1,19 +1,21 @@
+library(leaflet)
+library(shinythemes)
+library(shinyjs)
+library(shinyBS)
 library(data.table)
 library(igraph)
 library(ggplot2)
-library(ggvis)
 library(shiny)
+library(ggvis)
+library(timeDate)
+library(tidyr)
+library(dplyr)
+library(sp)
+library(maptools)
+library(DT)
+library(devtools)
+library(ggthemr)
+library(plotly)
 
-i.am.a.name. <- function(var) {
 
-}
-
-i.am.another.name. <- function(var) {
-
-}
-
-i.am.yet.another.name. <- function(var) {
-
-}
-
-load("spotify-rdata.RData")
+load("my_work_space.RData")
